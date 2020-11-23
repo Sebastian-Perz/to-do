@@ -1,6 +1,14 @@
 const form = document.getElementById("form");
 const input = document.getElementById("input");
-const todos = document.getElementById("todos");
+const todosUL = document.getElementById("todos");
+
+const todos = JSON.parse(localStorage.getItem("todos"));
+
+if (todos) {
+  todos.forEach((todo) => {
+    addTodo(todo);
+  });
+}
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -8,12 +16,19 @@ form.addEventListener("submit", (e) => {
   addTodo();
 });
 
-function addTodo() {
-  const todoText = input.value;
+function addTodo(todo) {
+  let todoText = input.value;
+
+  if (todo) {
+    todoText = todo.text;
+  }
 
   if (todoText) {
     const todoElement = document.createElement("li");
-    todoElement.innerHTML = todoText;
+    if (todo && todo.completed) {
+      todoElement.classList.add("completed");
+    }
+    todoElement.innerText = todoText;
 
     todoElement.addEventListener("click", () => {
       todoElement.classList.toggle("completed");
@@ -28,7 +43,7 @@ function addTodo() {
 
       updateLS();
     });
-    todos.appendChild(todoElement);
+    todosUL.appendChild(todoElement);
 
     input.value = "";
 
@@ -48,5 +63,5 @@ function updateLS() {
     });
   });
 
-  localStorage.setItem("notes", JSON.stringify(todos));
+  localStorage.setItem("todos", JSON.stringify(todos));
 }
